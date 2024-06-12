@@ -1,3 +1,5 @@
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
@@ -7,18 +9,26 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class OrderListRepoTest {
+    private final LocalDateTime timestamp = LocalDateTime.now();
+    private final OrderListRepo repo = new OrderListRepo();
+    private final Product product = new Product("1", "Apfel");
+    private final Order newOrder = new Order("1", List.of(product), OrderStatus.PROCESSING, timestamp);
+    private Order actual;
+
+    @BeforeEach
+    void setUpBefore() {
+        actual = repo.addOrder(newOrder);
+    }
+
+    @AfterEach
+    void setUpAfter() {
+        List<String> orderIds = repo.getOrders().stream().map(Order::id).toList();
+
+        for (String id : orderIds) repo.removeOrder(id);
+    }
 
     @Test
     void getOrders() {
-        LocalDateTime timestamp = LocalDateTime.now();
-
-        //GIVEN
-        OrderListRepo repo = new OrderListRepo();
-
-        Product product = new Product("1", "Apfel");
-        Order newOrder = new Order("1", List.of(product), OrderStatus.PROCESSING, timestamp);
-        repo.addOrder(newOrder);
-
         //WHEN
         List<Order> actual = repo.getOrders();
 
@@ -32,15 +42,6 @@ class OrderListRepoTest {
 
     @Test
     void getOrderById() {
-        LocalDateTime timestamp = LocalDateTime.now();
-
-        //GIVEN
-        OrderListRepo repo = new OrderListRepo();
-
-        Product product = new Product("1", "Apfel");
-        Order newOrder = new Order("1", List.of(product), OrderStatus.PROCESSING, timestamp);
-        repo.addOrder(newOrder);
-
         //WHEN
         Order actual = repo.getOrderById("1");
 
@@ -53,16 +54,6 @@ class OrderListRepoTest {
 
     @Test
     void addOrder() {
-        LocalDateTime timestamp = LocalDateTime.now();
-
-        //GIVEN
-        OrderListRepo repo = new OrderListRepo();
-        Product product = new Product("1", "Apfel");
-        Order newOrder = new Order("1", List.of(product), OrderStatus.PROCESSING, timestamp);
-
-        //WHEN
-        Order actual = repo.addOrder(newOrder);
-
         //THEN
         Product product1 = new Product("1", "Apfel");
         Order expected = new Order("1", List.of(product1), OrderStatus.PROCESSING, timestamp);
@@ -72,13 +63,8 @@ class OrderListRepoTest {
 
     @Test
     void removeOrder() {
-        //GIVEN
-        OrderListRepo repo = new OrderListRepo();
-
-        //WHEN
         repo.removeOrder("1");
 
-        //THEN
         assertNull(repo.getOrderById("1"));
     }
 }
