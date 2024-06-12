@@ -21,4 +21,9 @@ public class ShopService {
 
         return orderRepo.addOrder(newOrder);
     }
+
+    // Write a method in the ShopService that returns a list of all orders with a specific order status (parameter) using streams.
+    public List<Order> getOrders(OrderStatus status) {
+        return orderRepo.getOrders().stream().filter(order -> order.status() == status).toList();
+    }
 }
