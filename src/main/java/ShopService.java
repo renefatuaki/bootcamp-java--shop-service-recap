@@ -25,4 +25,15 @@ public class ShopService {
     public List<Order> getOrders(OrderStatus status) {
         return orderRepo.getOrders().stream().filter(order -> order.status() == status).toList();
     }
+
+    // Add an 'updateOrder' method in the ShopService that updates the Order based on an orderId and a new order status.
+    // Use the Lombok @With annotation for this.
+    public void updateOrder(String orderId, OrderStatus status) {
+        Optional<Order> order = Optional.ofNullable(orderRepo.getOrderById(orderId));
+
+        if (order.isPresent()) {
+            Order updatedOrder = order.get().withStatus(status);
+            orderRepo.updateOrder(updatedOrder);
+        }
+    }
 }
