@@ -12,7 +12,7 @@ public class ShopService {
         for (String productId : productIds) {
             Optional<Product> productToOrder = productRepo.getProductById(productId);
 
-            products.add(productToOrder.orElseThrow(() -> new ProductNotFoundException("Product not found!")));
+            products.add(productToOrder.orElseThrow(ProductNotFoundException::new));
 
         }
 
